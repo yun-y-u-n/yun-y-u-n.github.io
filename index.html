@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天津一中历史社宗庙</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        /* 全局背景与遮罩 */
+        body {
+            background: url('https://picsum.521120.xyz/id/106/1920/1080') center/cover no-repeat fixed;
+            min-height: 100vh;
+            position: relative;
+            color: #e6b800;
+            padding: 2rem 1rem;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 30, 0.88);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* 标题样式 */
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
+            border-bottom: 3px solid #e6b800;
+            padding-bottom: 1rem;
+            letter-spacing: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            letter-spacing: 0.2rem;
+        }
+
+        /* 信息面板 */
+        .info-panel {
+            background: rgba(230, 184, 0, 0.12);
+            border: 1px solid #e6b800;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem auto;
+            max-width: 800px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            backdrop-filter: blur(5px);
+        }
+
+        .info-item {
+            margin: 0.5rem 1rem;
+        }
+
+        .info-label {
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+
+        .info-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-top: 0.3rem;
+            color: #ffd700;
+        }
+
+        /* 按钮通用样式 */
+        .btn {
+            background: linear-gradient(135deg, #8b0000 0%, #b22222 50%, #dc143c 100%);
+            color: #fff;
+            border: 2px solid #e6b800;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            font-weight: 600;
+            letter-spacing: 0.1rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(220, 20, 60, 0.5);
+            border-color: #ffd700;
+        }
+
+        .btn:disabled {
+            background: #444;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            border-color: #666;
+            opacity: 0.7;
+        }
+
+        /* 新增：一键清空按钮的特殊样式（稍微浅一点的红色，区分功能） */
+        .btn-clear {
+            background: linear-gradient(135deg, #5c0000 0%, #8b0000 50%, #a52a2a 100%);
+        }
+
+        /* 帝王灵位区 */
+        .ancestral-hall {
+            margin: 3rem 0;
+        }
+
+        .hall-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.3rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            border-left: 4px solid #e6b800;
+            border-right: 4px solid #e6b800;
+            display: inline-block;
+            padding: 0 2rem;
+        }
+
+        .spirit-tablets {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin: 0 auto;
+        }
+
+        .tablet {
+            background: linear-gradient(180deg, #2c0c0c 0%, #1a0505 100%);
+            border: 2px solid #b8860b;
+            border-radius: 8px;
+            padding: 1rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tablet::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent 0%, #e6b800 50%, transparent 100%);
+        }
+
+        .tablet:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(230, 184, 0, 0.4);
+        }
+
+        /* 多选高亮样式 */
+        .tablet.selected {
+            background: linear-gradient(180deg, #4a0a0a 0%, #2d0505 100%);
+            border-color: #ffd700;
+            box-shadow: 0 0 25px rgba(230, 184, 0, 0.6);
+        }
+
+        .emperor-avatar {
+            width: 100px;
+            height: 130px;
+            object-fit: cover;
+            border: 2px solid #b8860b;
+            border-radius: 4px;
+            margin: 0 auto 0.8rem;
+            display: block;
+            background: #111;
+        }
+
+        .emperor-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            color: #ffd700;
+        }
+
+        .emperor-name {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.3rem;
+        }
+
+        .emperor-reign {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* 帝王简介区样式 */
+        .intro-section {
+            background: rgba(230, 184, 0, 0.12);
+            border: 1px solid #e6b800;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 1200px;
+            backdrop-filter: blur(5px);
+        }
+
+        .intro-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .intro-card {
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid #b8860b;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: left;
+        }
+
+        .intro-card .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffd700;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(230, 184, 0, 0.3);
+            padding-bottom: 0.5rem;
+        }
+
+        .intro-card .card-reign {
+            font-size: 0.85rem;
+            opacity: 0.7;
+            margin-bottom: 0.8rem;
+        }
+
+        .intro-card .card-intro {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .empty-tip {
+            opacity: 0.7;
+            font-size: 1rem;
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        /* 祭品选择区 */
+        .sacrifice-section {
+            background: rgba(230, 184, 0, 0.12);
+            border: 1px solid #e6b800;
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 1000px;
+            backdrop-filter: blur(5px);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            letter-spacing: 0.2rem;
+        }
+
+        .sacrifice-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .sacrifice-option {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid #e6b800;
+            border-radius: 8px;
+            padding: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sacrifice-option:hover {
+            background: rgba(230, 184, 0, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .sacrifice-option.selected {
+            background: rgba(230, 184, 0, 0.3);
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(230, 184, 0, 0.5);
+        }
+
+        .sacrifice-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            border: 1px solid #b8860b;
+            background: #111;
+        }
+
+        .sacrifice-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .sacrifice-desc {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        /* 祝福展示区 */
+        .blessing-box {
+            background: rgba(230, 184, 0, 0.15);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 2.5rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            backdrop-filter: blur(5px);
+            white-space: pre-line;
+        }
+
+        .blessing-box.show {
+            opacity: 1;
+        }
+
+        .blessing-text {
+            color: #ffd700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                letter-spacing: 0.2rem;
+            }
+            .hall-title {
+                font-size: 1.5rem;
+            }
+            .spirit-tablets {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+            .emperor-avatar {
+                width: 80px;
+                height: 100px;
+            }
+            .sacrifice-options {
+                grid-template-columns: 1fr 1fr;
+            }
+            .intro-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏛️ 天津一中历史社宗庙 🏛️</h1>
+        <p class="subtitle">承大唐三百年国祚，敬列祖列宗威灵</p>
+        
+        <!-- 信息面板 -->
+        <div class="info-panel">
+            <div class="info-item">
+                <div class="info-label">先王好感度</div>
+                <div class="info-value" id="favorability">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">上次签到</div>
+                <div class="info-value" id="lastSign">未签到</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">当前祭拜</div>
+                <div class="info-value" id="selectedEmperor">未选择</div>
+            </div>
+        </div>
+
+        <!-- 按钮区：新增一键清空按钮 -->
+        <button class="btn" id="signBtn">每日签到 领太牢礼</button>
+        <button class="btn btn-clear" id="clearBtn">一键清空选中</button>
+
+        <!-- 帝王灵位区 -->
+        <div class="ancestral-hall">
+            <h2 class="hall-title">大唐列祖列宗灵位</h2>
+            <p style="opacity:0.8; margin-bottom:1rem;">点击灵位可多选，再次点击取消选中</p>
+            <div class="spirit-tablets" id="tabletsContainer"></div>
+        </div>
+
+        <!-- 选中帝王简介展示区 -->
+        <div class="intro-section" id="introSection">
+            <h2 class="section-title">选中先王简介</h2>
+            <div class="intro-container" id="introContainer">
+                <p class="empty-tip">请择选先王灵位，即可查看其生平简介</p>
+            </div>
+        </div>
+
+        <!-- 祭品选择区 -->
+        <div class="sacrifice-section">
+            <h2 class="section-title">选择祭祀贡品</h2>
+            <div class="sacrifice-options">
+                <div class="sacrifice-option" data-value="tailao" data-favor="15">
+                    <img src="https://picsum.521120.xyz/id/488/400/300" alt="太牢之礼" class="sacrifice-img" onerror="this.src='https://picsum.521120.xyz/id/237/400/300'">
+                    <div class="sacrifice-name">太牢之礼</div>
+                    <div class="sacrifice-desc">牛、羊、豕三牲全备，帝王祭祀最高礼</div>
+                </div>
+                <div class="sacrifice-option" data-value="shaolao" data-favor="10">
+                    <img src="https://picsum.521120.xyz/id/139/400/300" alt="少牢之礼" class="sacrifice-img" onerror="this.src='https://picsum.521120.xyz/id/102/400/300'">
+                    <div class="sacrifice-name">少牢之礼</div>
+                    <div class="sacrifice-desc">羊、豕二牲，诸侯卿大夫祭祀礼</div>
+                </div>
+                <div class="sacrifice-option" data-value="grain" data-favor="5">
+                    <img src="https://picsum.521120.xyz/id/493/400/300" alt="五谷之礼" class="sacrifice-img" onerror="this.src='https://picsum.521120.xyz/id/292/400/300'">
+                    <div class="sacrifice-name">五谷之礼</div>
+                    <div class="sacrifice-desc">稻、黍、稷、麦、菽，民生之本</div>
+                </div>
+                <div class="sacrifice-option" data-value="jade" data-favor="8">
+                    <img src="https://picsum.521120.xyz/id/1048/400/300" alt="玉帛之礼" class="sacrifice-img" onerror="this.src='https://picsum.521120.xyz/id/152/400/300'">
+                    <div class="sacrifice-name">玉帛之礼</div>
+                    <div class="sacrifice-desc">瑞玉、束帛，祭祀之瑞器</div>
+                </div>
+            </div>
+            <button class="btn" id="worshipBtn" disabled>一键祭拜选中先王</button>
+        </div>
+
+        <!-- 祝福展示区 -->
+        <div class="blessing-box" id="blessingBox">
+            <div class="blessing-text" id="blessingText">恭请先择选先王灵位，再挑选祭祀贡品，即可上香祭拜，获先王赐福</div>
+        </div>
+    </div>
+
+    <script>
+        // ===================== 1. 核心数据准备 =====================
+        // 唐朝21位帝王完整列表
+        const emperors = [
+            {
+                templeName: "高祖",
+                posthumousName: "神尧大圣大光孝皇帝",
+                name: "彭宇程",
+                reign: "2022~2023",
+                avatar: "https://picsum.521120.xyz/id/1005/100/130",
+                intro: "唐朝开国皇帝，出身关陇世家，隋末于晋阳起兵反隋，618年正式建立唐朝，先后平定四方割据势力，统一全国，奠定了大唐三百年的基业。"
+            },
+            {
+                templeName: "太宗",
+                posthumousName: "文武大圣大广孝皇帝",
+                name: "李治衡",
+                reign: "2023~2024",
+                avatar: "https://picsum.521120.xyz/id/1012/100/130",
+                intro: "唐朝第二位皇帝，通过玄武门之变登基，开创了史上著名的「贞观之治」。在位期间虚心纳谏、轻徭薄赋、平定四方外患，被周边部族尊为「天可汗」，是中国历史上公认的千古明君。"
+            },
+            {
+                templeName: "高宗",
+                posthumousName: "天皇大圣大弘孝皇帝",
+                name: "安登宸",
+                reign: "2024~2025",
+                avatar: "https://picsum.521120.xyz/id/1074/100/130",
+                intro: "唐太宗第九子，在位期间延续贞观国策，开创「永徽之治」，先后攻灭西突厥、百济、高句丽，将唐朝的版图拓展到鼎盛。后期与武则天共同临朝理政，史称「二圣临朝」。"
+            },
+        ];
+
+        // 历代帝王专属赠语库
+        const emperorBlessings = {
+            "彭宇程": [
+                "唐固吾国，太原即其地焉。今我来斯，是为天与。",
+                "王者膺图受箓，必在灵祇，革命创制，义存宗社。",
+                "安天下之要，在于得人。"
+            ],
+            "李治衡": [
+                "以铜为镜，可以正衣冠；以史为镜，可以知兴替；以人为镜，可以明得失。",
+                "水能载舟，亦能覆舟。",
+                "疾风知劲草，板荡识诚臣。",
+                "为政之要，惟在得人，用非其才，必难致治。"
+            ],
+            "安登宸": [
+                "君天下者，以天下为心，岂限华夷。",
+                "朕临御天下，二十有三年，常以万姓为心，而不以四海为乐。",
+                "法者，天下之公器，不可以私害公。"
+            ],
+            "default": [
+                "积善之家，必有余庆；积不善之家，必有余殃。",
+                "天行健，君子以自强不息；地势坤，君子以厚德载物。",
+                "心诚则灵，至诚感神，恭祭必受其福。",
+                "皇天无亲，惟德是辅；民心无常，惟惠之怀。"
+            ]
+        };
+
+        // ===================== 2. 游戏核心数据 =====================
+        let gameData = {
+            favorability: 0, // 全局好感度
+            lastSignDate: '', // 上次签到日期
+            selectedEmperors: [], // 选中的帝王数组
+            selectedSacrifice: null // 选中的祭品
+        };
+
+        // ===================== 3. 页面初始化 =====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // 绑定按钮点击事件（新增一键清空按钮的绑定）
+            document.getElementById('signBtn').addEventListener('click', dailySign);
+            document.getElementById('clearBtn').addEventListener('click', clearSelection);
+            document.getElementById('worshipBtn').addEventListener('click', worship);
+            
+            // 生成帝王灵位
+            renderTablets();
+            // 绑定祭品点击事件
+            bindSacrificeClick();
+            // 加载本地存储的历史数据
+            loadLocalData();
+            // 更新页面显示
+            updateUI();
+            // 更新简介面板
+            updateIntroPanel();
+            // 检查今日签到状态
+            checkSignStatus();
+        });
+
+        // ===================== 4. 核心功能函数 =====================
+        // 生成帝王灵位
+        function renderTablets() {
+            const container = document.getElementById('tabletsContainer');
+            let html = '';
+            
+            // 循环所有帝王，生成灵位HTML
+            emperors.forEach(emperor => {
+                // 判断当前帝王是否被选中，刷新页面后保留高亮
+                const isSelected = gameData.selectedEmperors.includes(emperor.name);
+                html += `
+                <div class="tablet ${isSelected ? 'selected' : ''}" data-emperor="${emperor.name}">
+                    <img src="${emperor.avatar}" alt="${emperor.templeName}${emperor.name}" class="emperor-avatar" onerror="this.src='https://picsum.521120.xyz/id/1024/100/130'">
+                    <div class="emperor-title">${emperor.templeName}</div>
+                    <div class="emperor-name">${emperor.name}</div>
+                    <div class="emperor-reign">${emperor.reign}</div>
+                </div>
+                `;
+            });
+            
+            // 把生成的灵位放到页面容器里
+            container.innerHTML = html;
+
+            // 给每个灵位绑定点击事件
+            document.querySelectorAll('.tablet').forEach(tablet => {
+                tablet.addEventListener('click', function() {
+                    selectEmperor(this);
+                });
+            });
+        }
+
+        // 帝王多选逻辑
+        function selectEmperor(element) {
+            const emperorName = element.dataset.emperor;
+            // 判断当前灵位是否已经被选中
+            const isSelected = element.classList.contains('selected');
+            
+            if (isSelected) {
+                // 取消选中：移除高亮样式，从选中数组里删掉这个帝王
+                element.classList.remove('selected');
+                gameData.selectedEmperors = gameData.selectedEmperors.filter(name => name !== emperorName);
+            } else {
+                // 选中：添加高亮样式，把帝王名字加到选中数组里
+                element.classList.add('selected');
+                gameData.selectedEmperors.push(emperorName);
+            }
+
+            // 选中后自动更新简介面板
+            updateIntroPanel();
+            // 保存数据到本地
+            saveData();
+            // 更新页面UI
+            updateUI();
+        }
+
+        // 更新帝王简介面板
+        function updateIntroPanel() {
+            const introContainer = document.getElementById('introContainer');
+            const selectedEmperors = gameData.selectedEmperors;
+
+            // 情况1：没有选中任何帝王，显示空提示
+            if (selectedEmperors.length === 0) {
+                introContainer.innerHTML = `<p class="empty-tip">请择选先王灵位，即可查看其生平简介</p>`;
+                return;
+            }
+
+            // 情况2：有选中的帝王，生成每个帝王的简介卡片
+            let html = '';
+            selectedEmperors.forEach(emperorName => {
+                // 从帝王列表里找到对应帝王的完整信息
+                const emperor = emperors.find(item => item.name === emperorName);
+                if (!emperor) return; // 找不到就跳过
+
+                // 生成简介卡片的HTML
+                html += `
+                <div class="intro-card">
+                    <div class="card-title">${emperor.templeName} · ${emperor.name}</div>
+                    <div class="card-reign">在位时间：${emperor.reign}</div>
+                    <div class="card-intro">${emperor.intro}</div>
+                </div>
+                `;
+            });
+
+            // 把生成的简介卡片放到页面里
+            introContainer.innerHTML = html;
+        }
+
+        // 绑定祭品点击事件
+        function bindSacrificeClick() {
+            document.querySelectorAll('.sacrifice-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    selectSacrifice(this);
+                });
+            });
+        }
+
+        // 选择祭品逻辑
+        function selectSacrifice(element) {
+            // 清除其他祭品的选中状态
+            document.querySelectorAll('.sacrifice-option').forEach(el => el.classList.remove('selected'));
+            // 给当前点击的祭品加选中高亮
+            element.classList.add('selected');
+            // 保存祭品的信息
+            gameData.selectedSacrifice = {
+                value: element.dataset.value,
+                favor: parseInt(element.dataset.favor) || 0,
+                name: element.querySelector('.sacrifice-name').textContent
+            };
+            // 保存数据并更新UI
+            saveData();
+            updateUI();
+        }
+
+        // 【新增核心功能】一键清空选中内容
+        function clearSelection() {
+            // 1. 清空数据：选中的帝王数组和祭品
+            gameData.selectedEmperors = [];
+            gameData.selectedSacrifice = null;
+
+            // 2. 移除页面上的所有高亮样式
+            // 移除帝王灵位的高亮
+            document.querySelectorAll('.tablet').forEach(tablet => {
+                tablet.classList.remove('selected');
+            });
+            // 移除祭品的高亮
+            document.querySelectorAll('.sacrifice-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+
+            // 3. 更新简介面板（显示空提示）
+            updateIntroPanel();
+
+            // 4. 更新页面UI（比如祭拜按钮变灰）
+            updateUI();
+
+            // 5. 保存数据到本地存储
+            saveData();
+
+            // 6. 给用户一个简单的提示
+            showBlessing('已清空选中的先王与祭品，请重新择选。');
+        }
+
+        // 加载本地存储数据
+        function loadLocalData() {
+            const savedData = localStorage.getItem('tangAncestralHallData');
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    // 兼容旧数据，确保选中的帝王一定是数组
+                    gameData = {
+                        favorability: parsed.favorability || 0,
+                        lastSignDate: parsed.lastSignDate || '',
+                        selectedEmperors: Array.isArray(parsed.selectedEmperors) ? parsed.selectedEmperors : [],
+                        selectedSacrifice: parsed.selectedSacrifice || null
+                    };
+                } catch (e) {
+                    console.error('数据加载失败，已重置', e);
+                    // 数据出错就重置
+                    gameData = {
+                        favorability: 0,
+                        lastSignDate: '',
+                        selectedEmperors: [],
+                        selectedSacrifice: null
+                    };
+                }
+            }
+        }
+
+        // 保存数据到本地存储
+        function saveData() {
+            localStorage.setItem('tangAncestralHallData', JSON.stringify(gameData));
+        }
+
+        // 更新页面UI显示
+        function updateUI() {
+            // 更新信息面板
+            document.getElementById('favorability').textContent = gameData.favorability;
+            document.getElementById('lastSign').textContent = gameData.lastSignDate || '未签到';
+            // 更新选中帝王的显示，显示选中的数量
+            document.getElementById('selectedEmperor').textContent = gameData.selectedEmperors.length > 0 
+                ? `已选${gameData.selectedEmperors.length}位先王` 
+                : '未选择';
+            
+            // 祭拜按钮启用逻辑：至少选中1位帝王 + 选中祭品，才能点击
+            const worshipBtn = document.getElementById('worshipBtn');
+            const canWorship = !!(gameData.selectedEmperors.length > 0 && gameData.selectedSacrifice);
+            worshipBtn.disabled = !canWorship;
+        }
+
+        // 检查签到状态
+        function checkSignStatus() {
+            const today = new Date().toDateString();
+            const signBtn = document.getElementById('signBtn');
+            if (gameData.lastSignDate === today) {
+                signBtn.disabled = true;
+                signBtn.textContent = '今日已签到';
+            } else {
+                signBtn.disabled = false;
+                signBtn.textContent = '每日签到 领太牢礼';
+            }
+        }
+
+        // 每日签到功能
+        function dailySign() {
+            const today = new Date().toDateString();
+            if (gameData.lastSignDate === today) return;
+
+            // 签到加10点好感度
+            gameData.lastSignDate = today;
+            gameData.favorability += 10;
+            // 保存数据并更新页面
+            saveData();
+            updateUI();
+            checkSignStatus();
+            showBlessing(`签到成功！获赠太牢之礼，先王好感度+10！\n\n心诚则灵，恭请择选先王灵位与祭祀贡品，即可上香祭拜。`);
+        }
+
+        // 一键祭拜核心逻辑
+        function worship() {
+            // 双重校验，确保选了帝王和祭品
+            if (gameData.selectedEmperors.length === 0 || !gameData.selectedSacrifice) {
+                showBlessing('请先择选先王灵位，再挑选祭祀贡品，方可祭拜！');
+                return;
+            }
+
+            // 增加好感度
+            const addFavor = gameData.selectedSacrifice.favor;
+            gameData.favorability += addFavor;
+
+            // 计算获祝福的概率（好感度越高，概率越高，最高90%封顶）
+            const baseProbability = 0.1;
+            const maxProbability = 0.9;
+            const probability = Math.min(baseProbability + (gameData.favorability / 600), maxProbability);
+
+            // 保存数据并更新页面
+            saveData();
+            updateUI();
+
+            // 生成祭拜结果文本
+            let blessingText = `祭拜成功！恭献${gameData.selectedSacrifice.name}，先王好感度+${addFavor}！\n\n`;
+            let hasBlessing = false;
+
+            // 遍历所有选中的帝王，每个都有概率出赐福
+            gameData.selectedEmperors.forEach(emperorName => {
+                const getBlessing = Math.random() < probability;
+                if (getBlessing) {
+                    hasBlessing = true;
+                    // 拿到对应帝王的赠语，没有就用兜底的
+                    const blessings = emperorBlessings[emperorName] || emperorBlessings.default;
+                    // 随机选一句赠语
+                    const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
+                    blessingText += `✨ 获${emperorName}先王赐福：\n「${randomBlessing}」\n\n`;
+                }
+            });
+
+            // 如果没有任何帝王赐福，显示提示
+            if (!hasBlessing) {
+                blessingText += `（今日诸位先王未显灵，提升好感度可大幅提高获赐福概率）`;
+            }
+
+            // 显示最终结果
+            showBlessing(blessingText);
+        }
+
+        // 展示祝福文本
+        function showBlessing(text) {
+            const box = document.getElementById('blessingBox');
+            const textEl = document.getElementById('blessingText');
+            // 先隐藏，再更新内容，再显示，触发淡入动画
+            box.classList.remove('show');
+            setTimeout(() => {
+                textEl.textContent = text;
+                box.classList.add('show');
+            }, 200);
+        }
+    </script>
+</body>
+</html>
